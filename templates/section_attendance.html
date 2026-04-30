@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Report | SmartAttend</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='images/mainIcon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/section_attendance.css') }}">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="{{ url_for('static', filename='Js/section_attendance.js') }}" defer></script>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <button class="menu-toggle" onclick="toggleSidebar()">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <div class="sidebar-profile" onclick="toggleProfile()">
+      <div class="sidebar-avatar">
+        {{ user['name'][0]|upper if user else 'I' }}
+      </div>
+
+      <div>
+        <div class="sidebar-name">
+          {{ user['name'] if user else 'Instructor' }}
+        </div>
+        <div class="sidebar-sub">Instructor</div>
+      </div>
+    </div>
+
+    <div class="sidebar-menu">
+    <a href="/instructor_dashboard">
+        <i data-lucide="layout-dashboard"></i>
+        <span>Dashboard</span>
+    </a>
+
+    <!-- CURRENT SECTION -->
+    <a href="/section/{{ section_id }}" class="active">
+        <i data-lucide="book-open"></i>
+        <span>{{ section_name }}</span>
+    </a>
+
+    <!-- OTHER SECTIONS ONLY -->
+    <!-- <div class="sidebar-subsections">
+        {% for sec in sections %}
+        {% if sec['section_id'] != section_id %}
+            <a href="/section/{{ sec['section_id'] }}" class="sidebar-subitem">
+            {{ sec['section_name'] }}
+            </a>
+        {% endif %}
+        {% endfor %}
+    </div> -->
+    <div class="sidebar-subsections">
+        {% for sec in sections %}
+        {% if sec[0] != section_id %}
+        <a href="/section/{{ sec[0] }}" class="sidebar-subitem">
+            {{ sec[1] }}
+        </a>
+        {% endif %}
+        {% endfor %}
+    </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <div class="welcome-card report-hero">
+      <div>
+        <h1>Attendance Report</h1>
+        <p>Review attendance by date and monitor overall student participation.</p>
+      </div>
+
+      <div class="report-summary">
+        <i data-lucide="activity"></i>
+        {{ avg_attendance }}% Average Presence
+      </div>
+    </div>
+
+    <div class="toolbar-card">
+      <div class="search-box">
+        <i data-lucide="search"></i>
+        <input
+          type="text"
+          id="attendanceSearch"
+          placeholder="Search by student name, ID, date (dd/mm/yyyy), or status"
+          onkeyup="filterAttendance()"
+        >
+      </div>
+    </div>
+
+    {% set ns = namespace(current_date=None) %}
+
+    {% for r in records %}
+
+      {% if ns.current_date != r[0] %}
+
+        {% if not loop.first %}
+            </tbody>
+            </table>
+          </div>
+        {% endif %}
+
+        <div class="attendance-group">
+
+          <div class="date-header">
+            <div class="date-title">
+              <i data-lucide="calendar-days"></i>
+              {{ r[0].strftime('%d/%m/%Y') if r[0] else '' }}
+            </div>
+          </div>
+
+          <div class="attendance-table-card">
+            <table class="attendance-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Student ID</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+        {% set ns.current_date = r[0] %}
+
+      {% endif %}
+
+      <tr class="attendance-row">
+        <td>{{ r[1] }}</td>
+        <td>{{ r[2] }}</td>
+        <td>
+          <span class="status-badge {% if r[3] == 'Present' %}present{% else %}absent{% endif %}">
+            {{ r[3] }}
+          </span>
+        </td>
+      </tr>
+
+    {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    <div class="report-actions">
+      <a href="/section/{{ section_id }}">
+        <button class="back-btn">
+          <i data-lucide="arrow-left"></i>
+          Back to Section
+        </button>
+      </a>
+    </div>
+
+  </div>
+
+</body>
+</html>

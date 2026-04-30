@@ -1,0 +1,341 @@
+/* GLOBAL */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+
+body{
+
+    background:#0f172a;
+    color:#e2e8f0;
+
+    min-height:100vh;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+}
+
+/* BACKGROUND GLOW */
+
+body::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:550px;
+    height:550px;
+
+    background:radial-gradient(circle,
+    rgba(56,189,248,0.25),
+    transparent 70%);
+
+    filter:blur(80px);
+
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+    z-index:-1;
+
+}
+
+/* WRAPPER */
+
+.signup-wrapper{
+
+    width:100%;
+    max-width:440px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+}
+
+/* LOGO */
+
+.system-title{
+
+    text-align:center;
+    margin-bottom:30px;
+    width:100%;
+
+}
+
+.logo-link{
+
+    text-decoration:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+}
+
+.system-title img{
+
+    width:100px;
+    margin-bottom:4px;
+
+}
+
+.system-title h1{
+
+    font-size:28px;
+    font-weight:700;
+
+}
+
+.logo-white{
+    color:white;
+}
+
+.logo-cyan{
+    color:#38bdf8;
+}
+
+.system-title p{
+
+    margin-top:5px;
+    color:#94a3b8;
+    font-size:14px;
+
+}
+
+/* CARD */
+
+.signup-card{
+
+    background:rgba(255,255,255,0.05);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    border-radius:14px;
+
+    padding:35px;
+
+    width:100%;
+
+    backdrop-filter:blur(10px);
+
+    box-shadow:0 10px 30px rgba(0,0,0,0.45);
+
+}
+
+.signup-card h2{
+
+    text-align:center;
+    margin-bottom:28px;
+    font-size:22px;
+
+}
+
+/* FORM */
+
+.form-group{
+    margin-bottom:18px;
+}
+
+label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-size:15px;
+    font-weight:500;
+
+    color:#cbd5f5;
+
+}
+
+input{
+
+    width:100%;
+
+    padding:13px 14px;
+
+    border-radius:8px;
+
+    border:1px solid rgba(255,255,255,0.12);
+
+    background:#020617;
+
+    color:#e2e8f0;
+
+    font-size:15px;
+
+    outline:none;
+
+    transition:all 0.2s ease;
+
+}
+
+input:hover{
+    border-color:rgba(56,189,248,0.35);
+}
+
+input:focus{
+
+    border-color:#38bdf8;
+
+    box-shadow:
+    0 0 0 2px rgba(56,189,248,0.15),
+    0 0 12px rgba(56,189,248,0.25);
+
+}
+
+/* PASSWORD FIELD */
+
+.password-field{
+    position:relative;
+    display:flex;
+    align-items:center;
+    }
+
+    .password-field input{
+    width:100%;
+    padding-right:40px;
+}
+
+/* PASSWORD FIELD */
+.password-field{
+position:relative;
+display:flex;
+align-items:center;
+}
+
+.password-field input{
+width:100%;
+padding-right:45px; /* more breathing space */
+}
+
+/* EYE ICON CONTAINER */
+.toggle-password{
+position:absolute;
+right:10px;
+top:50%;
+transform:translateY(-50%);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+width:32px;
+height:32px;
+
+border-radius:8px;
+
+cursor:pointer;
+transition:all 0.2s ease;
+}
+
+/* ICON */
+.toggle-password svg{
+width:18px;
+height:18px;
+
+stroke:#94a3b8;
+
+transition:0.2s ease;
+}
+
+/* HOVER */
+.toggle-password:hover{
+    background:rgba(56,189,248,0.12);
+}
+
+.toggle-password:hover svg{
+stroke:#38bdf8;
+}
+
+/* CLICK FEEDBACK */
+.toggle-password:active{
+transform:translateY(-50%) scale(0.92);
+}
+
+/* BUTTON */
+
+.btn-signup{
+
+    width:100%;
+
+    margin-top:12px;
+
+    padding:13px;
+
+    background:#38bdf8;
+
+    border:none;
+
+    border-radius:8px;
+
+    color:#0f172a;
+
+    font-weight:600;
+    font-size:16px;
+
+    cursor:pointer;
+
+    transition:0.25s;
+
+}
+
+.btn-signup:hover{
+
+    background:#0ea5e9;
+
+    transform:translateY(-1px);
+
+}
+
+/* LOGIN LINK */
+
+.login-link{
+
+    margin-top:20px;
+
+    text-align:center;
+
+    font-size:14px;
+
+    color:#94a3b8;
+
+}
+
+.login-link a{
+
+    color:#38bdf8;
+
+    text-decoration:none;
+
+    font-weight:500;
+
+}
+
+.login-link a:hover{
+
+    text-decoration:underline;
+
+}
+
+/* MOBILE */
+
+@media(max-width:500px){
+
+.signup-card{
+    padding:28px;
+    }
+
+    .system-title h1{
+    font-size:24px;
+}
+
+}

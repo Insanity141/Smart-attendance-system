@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Section | SmartAttend</title>
+
+  <link rel="icon" href="{{ url_for('static', filename='images/mainIcon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+  <div class="sidebar-top">
+    <button class="menu-toggle" onclick="toggleSidebar()">
+      <i data-lucide="x"></i>
+    </button>
+  </div>
+
+  <div class="sidebar-profile" onclick="toggleProfile()">
+    <div class="sidebar-avatar">
+      {{ user['first_name'][0]|upper if user else 'A' }}
+    </div>
+    <div>
+      <div class="sidebar-name">{{ user['first_name'] }}</div>
+      <div class="sidebar-sub">Admin</div>
+    </div>
+  </div>
+
+  <div class="sidebar-menu">
+
+    <a href="/admin_dashboard">
+      <i data-lucide="home"></i>
+      <span>Dashboard</span>
+    </a>
+
+    <a href="/view_students">
+      <i data-lucide="users"></i>
+      <span>Students</span>
+    </a>
+
+    <a href="/manage_instructors">
+      <i data-lucide="user-cog"></i>
+      <span>Instructors</span>
+    </a>
+
+    <a href="/view_sections" class="active">
+      <i data-lucide="layers"></i>
+      <span>Sections</span>
+    </a>
+
+    <a href="/admin_reports">
+      <i data-lucide="bar-chart-3"></i>
+      <span>Reports</span>
+    </a>
+
+  </div>
+
+</div>
+
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+  <!-- HEADER -->
+  <div class="welcome-card">
+
+    <div class="welcome-top">
+
+      <button class="menu-toggle" onclick="toggleSidebar()">
+        <i data-lucide="menu"></i>
+      </button>
+
+      <button class="profile-btn" onclick="toggleProfile()">
+        {{ user['first_name'][0]|upper if user else 'A' }}
+      </button>
+
+    </div>
+
+    <div class="welcome-text">
+        <h1>{{ section_name }}</h1>
+        <p class="section-subtitle">
+        Instructor: {{ instructor_name if instructor_name else 'Unassigned' }}
+        </p>
+    </div>
+
+  </div>
+
+
+  <!-- STUDENT TABLE -->
+  <div class="dashboard-card no-hover">
+
+    <div class="table-header">
+      <div class="table-header-top">
+        <h2>Students</h2>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="modern-table">
+
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for s in students %}
+          <tr>
+            <td>{{ s[0] }}</td>
+            <td>{{ s[1] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- OVERLAY -->
+<div id="overlay" class="overlay"></div>
+
+<!-- PROFILE PANEL -->
+<div id="profilePanel" class="profile-panel">
+  <div class="profile-header">
+    <div class="profile-avatar">
+      {{ user['first_name'][0]|upper if user else 'A' }}
+    </div>
+    <div class="profile-name">{{ user['first_name'] }}</div>
+  </div>
+
+  <button class="close-profile" onclick="toggleProfile()">
+    <i data-lucide="x"></i>
+  </button>
+
+  <div class="profile-content">
+    {% include "profile_admin.html" %}
+  </div>
+</div>
+
+
+<!-- JS -->
+<script src="{{ url_for('static', filename='js/sideBar.js') }}"></script>
+
+</body>
+</html>

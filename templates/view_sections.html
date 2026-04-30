@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Sections | SmartAttend</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='images/mainIcon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-top">
+        <button class="menu-toggle" onclick="toggleSidebar()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="sidebar-profile" onclick="toggleProfile()">
+        <div class="sidebar-avatar">{{ user['first_name'][0]|upper }}</div>
+        <div>
+            <div class="sidebar-name">{{ user['first_name'] }}</div>
+            <div class="sidebar-sub">Admin</div>
+        </div>
+    </div>
+    <div class="sidebar-menu">
+        <a href="/admin_dashboard"><i data-lucide="home"></i><span>Dashboard</span></a>
+        <a href="/view_students"><i data-lucide="users"></i><span>Students</span></a>
+        <a href="/manage_instructors"><i data-lucide="user-cog"></i><span>Instructors</span></a>
+        <a href="/view_sections" class="active"><i data-lucide="layers"></i><span>Sections</span></a>
+        <a href="/admin_reports"><i data-lucide="bar-chart-3"></i><span>Reports</span></a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="welcome-card">
+        <div class="welcome-top">
+            <button class="menu-toggle" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+            <button class="profile-btn" onclick="toggleProfile()">{{ user['first_name'][0]|upper }}</button>
+        </div>
+        <div class="welcome-text">
+            <h1>Course Sections</h1>
+            <p>Academic Department Divisions</p>
+        </div>
+    </div>
+
+    <div class="overview-grid">
+        <div class="overview-item">
+            <i data-lucide="layers" class="icon-blue"></i>
+            <div>
+                <p>Total Sections</p>
+                <h3>{{ sections|length }}</h3>
+            </div>
+        </div>
+        <div class="overview-item">
+            <i data-lucide="clock" class="icon-green"></i>
+            <div>
+                <p>Current Period</p>
+                <h3>{{ now.strftime('%B %Y') }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-card no-hover">
+        <div class="table-header">
+            <div class="table-header-top">
+                <h2>Active Sections</h2>
+                <button class="add-btn" onclick="openSectionModal()">
+                    <i data-lucide="plus"></i> Add
+                </button>
+            </div>
+            <div class="table-header-bottom">
+                <input type="text" id="sectionSearch" placeholder="Search by section name..." class="search-input" />
+            </div>
+            <div class="table-header-bottom spaced"></div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="modern-table" id="sectionTable">
+                <thead>
+                    <tr>
+                        <th>Section Identifier</th>
+                        <th>Instructor</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in sections %}
+                    <tr>
+                        <td>
+                            <a href="/admin_section/{{ s[0] }}" class="section-link">
+                                <div class="section-chip clickable-chip">
+                                    <i data-lucide="bookmark"></i>
+                                    <span>{{ s[1] }}</span>
+                                </div>
+                            </a>
+                        </td>
+                        <td>
+                            <span class="instructor-name">{{ s[2] if s[2] else 'Unassigned' }}</span>
+                        </td>
+                        <td class="text-right">
+                            <div class="action-menu">
+                                <button onclick="toggleMenu(this)" class="kebab-btn">
+                                    <i data-lucide="more-vertical"></i>
+                                </button>
+                                <div class="dropdown">
+                                    <a href="/admin_section/{{ s[0] }}">
+                                        <i data-lucide="eye"></i> View Details
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="confirmDelete('{{ s[0] }}', '{{ s[1] }}')" class="danger">
+                                        <i data-lucide="trash-2"></i> Remove Section
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="addSectionModal" class="modal">
+    <div class="modal-content">
+        <h2>Add New Section</h2>
+
+        <form id="addSectionForm">
+            <div class="form-group">
+                <label>Section Name</label>
+                <input type="text" name="section_name" placeholder="e.g., CSE347-1" required class="search-input modal-input-field">
+            </div>
+
+                <div class="form-group">
+                    <label>Instructor Email</label>
+                    <input 
+                        type="email" 
+                        name="instructor_email" 
+                        placeholder="e.g. xyz@gmail.com"
+                        required
+                        class="search-input modal-input-field"
+                    >
+                </div>
+            <div class="modal-actions">
+                <button type="submit" class="update-btn">Add</button>
+                <button type="button" onclick="closeSectionModal()" class="logout-btn">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="overlay" class="overlay" onclick="toggleProfile()"></div>
+<div id="profilePanel" class="profile-panel">
+    <div class="profile-header">
+        <div class="profile-avatar">{{ user['first_name'][0]|upper }}</div>
+        <div class="profile-name">{{ user['first_name'] }}</div>
+    </div>
+    <button class="close-profile" onclick="toggleProfile()"><i data-lucide="x"></i></button>
+    <div class="profile-content">
+        {% include "profile_admin.html" %}
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+
+    function toggleSidebar() { 
+        document.querySelector(".sidebar").classList.toggle("open"); 
+    }
+
+    function toggleProfile() { 
+        document.getElementById("profilePanel").classList.toggle("open");
+        document.getElementById("overlay").classList.toggle("active");
+    }
+
+    function openSectionModal() { 
+        document.getElementById("addSectionModal").classList.add("active"); 
+    }
+
+    function closeSectionModal() { 
+        document.getElementById("addSectionModal").classList.remove("active"); 
+    }
+
+    document.getElementById("sectionSearch").addEventListener("input", function() {
+        const val = this.value.toLowerCase();
+        document.querySelectorAll("#sectionTable tbody tr").forEach(row => {
+            const text = row.querySelector(".section-chip span").textContent.toLowerCase();
+            row.style.display = text.includes(val) ? "" : "none";
+        });
+    });
+
+    function toggleMenu(button) {
+    const menu = button.closest(".action-menu");
+    const isOpen = menu.classList.contains("active");
+    // Close all other menus first
+    document.querySelectorAll(".action-menu").forEach(m => m.classList.remove("active"));
+    if (!isOpen) menu.classList.add("active");
+}
+
+document.addEventListener("click", function(e){
+  if (!e.target.closest(".action-menu")) {
+    document.querySelectorAll(".action-menu")
+      .forEach(m => m.classList.remove("active"));
+  }
+
+  // modal close on outside click
+  const modal = document.getElementById("addSectionModal");
+  if (e.target === modal) {
+    closeSectionModal();
+  }
+});
+
+// ESC KEY
+document.addEventListener("keydown", function(e){
+  if (e.key === "Escape") {
+    closeSectionModal();
+
+    // close profile
+    document.getElementById("profilePanel").classList.remove("open");
+    document.getElementById("overlay").classList.remove("active");
+
+    // close menus
+    document.querySelectorAll(".action-menu")
+      .forEach(m => m.classList.remove("active"));
+  }
+});
+
+function confirmDelete(id, name){
+  if(confirm(`Delete section "${name}"? This cannot be undone.`)){
+    window.location.href = `/delete_section/${id}`;
+  }
+}
+
+// Close dropdowns on click outside
+document.addEventListener("click", (e) => {
+    if (!e.target.closest(".action-menu")) {
+        document.querySelectorAll(".action-menu").forEach(m => m.classList.remove("active"));
+    }
+});
+
+    document.getElementById("addSectionForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const res = await fetch("/admin_add_section", { method: "POST", body: new FormData(this) });
+        const data = await res.json();
+        if (data.success) window.location.reload();
+        else alert(data.message);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Section Dashboard | SmartAttend</title>
+
+  <link rel="icon" href="{{ url_for('static', filename='images/mainIcon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/section.css') }}">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="{{ url_for('static', filename='Js/section.js') }}" defer></script>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <button class="menu-toggle" onclick="toggleSidebar()">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <div class="sidebar-profile" onclick="toggleProfile()">
+      <div class="sidebar-avatar">
+        {{ user['name'][0]|upper if user else 'I' }}
+      </div>
+
+      <div>
+        <div class="sidebar-name">{{ user['name'] if user else 'Instructor' }}</div>
+        <div class="sidebar-sub">Instructor</div>
+      </div>
+    </div>
+
+    <div class="sidebar-menu">
+      <a href="/instructor_dashboard">
+        <i data-lucide="layout-dashboard"></i>
+        <span>Dashboard</span>
+      </a>
+
+      <a href="/section/{{ section_id }}" class="active">
+        <i data-lucide="book-open"></i>
+        <span>{{ section_name }}</span>
+      </a>
+
+      <div class="sidebar-subsections">
+        {% for sec in sections[:5] %}
+        {% if sec['section_id'] != section_id %}
+          <a href="/section/{{ sec['section_id'] }}" class="sidebar-subitem">
+            {{ sec['section_name'] }}
+          </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  
+    <div class="main-content">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="welcome-card section-hero">
+      <div>
+        <h1>{{ section_name }}</h1>
+        <p>Manage enrolled students, attendance, and reports.</p>
+      </div>
+
+       <div class="hero-actions">
+        <button class="create-section-btn" onclick="openAddStudentModal()">
+          <i data-lucide="user-plus"></i>
+          Add Student
+        </button>
+
+        <a href="/take_attendance/{{ section_id }}">
+          <button class="attendance-btn">
+            <i data-lucide="scan-face"></i>
+            Take Attendance
+          </button>
+        </a>
+
+        <a href="/section_attendance/{{ section_id }}">
+          <button class="report-btn">
+            <i data-lucide="bar-chart-3"></i>
+            Attendance Report
+          </button>
+        </a>
+      </div>
+    </div>
+
+    <div class="student-toolbar">
+      <div class="search-box">
+        <i data-lucide="search"></i>
+        <input type="text" id="studentSearch" placeholder="Search by Student ID or Name" onkeyup="filterStudents()">
+      </div>
+
+      <div class="student-count">
+        {{ students|length }} Students
+      </div>
+    </div>
+
+    <div class="student-table-card">
+      <table class="student-table" id="studentTable">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Present</th>
+            <th>Total</th>
+            <th>Attendance %</th>
+            <th></th>
+          </tr>
+        </thead>
+
+         <tbody>
+          {% for student in students %}
+          <tr>
+            <td>{{ student['student_id'] }}</td>
+            <td>{{ student['name'] }}</td>
+            <td>{{ student['presents'] }}</td>
+            <td>{{ student['total_classes'] }}</td>
+
+            <td>
+                {% if student['total_classes'] == 0 %}
+                <span class="attendance-badge low">0%</span>
+              {% else %}
+                {% set percentage = (student['presents'] / student['total_classes'] * 100)|round(0) %}
+                <span class="attendance-badge {% if percentage >= 80 %}high{% elif percentage >= 60 %}medium{% else %}low{% endif %}">
+                  {{ percentage }}%
+                </span>
+              {% endif %}
+            </td>
+
+            <td>
+              <div class="kebab-container">
+                <button class="kebab-btn" onclick="toggleKebabMenu(this)">
+                  <i data-lucide="more-vertical"></i>
+                </button>
+
+                <div class="kebab-dropdown">
+                  <a href="/remove_student/{{ section_id }}/{{ student['student_id'] }}"
+                     class="kebab-item delete"
+                     onclick="return confirm('Remove this student from the section?')">
+                    <i data-lucide="user-minus"></i>
+                    Remove
+                  </a>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addStudentOverlay" onclick="closeAddStudentModal()"></div>
+
+  <div class="modal" id="addStudentModal">
+    <div class="modal-header">
+      <h2>Add Student</h2>
+      <button class="modal-close" onclick="closeAddStudentModal()">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+     <form method="POST" action="/add_student_to_section/{{ section_id }}" class="modal-form">
+      <input type="text" name="student_id" placeholder="Student ID (2023-3-6-407)" required>
+
+      <div class="modal-note">
+        Student must already exist in the system.
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn" onclick="closeAddStudentModal()">Cancel</button>
+        <button type="submit" class="create-btn">Add Student</button>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>

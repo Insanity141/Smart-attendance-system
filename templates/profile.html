@@ -1,0 +1,112 @@
+<div class="profile-wrapper">
+
+<div class="profile-header">
+  <div class="profile-avatar">{{ user[0][0] }}</div>
+  <div class="profile-name">{{ user[0].split()[0] }}</div>
+</div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        {% if category == 'success' %}
+          <div class="flash-message success">{{ message }}</div>
+        {% elif category == 'error' %}
+          <div class="error-box">{{ message }}</div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+<h2 class="profile-title">My Profile</h2>
+
+<form method="POST" action="{{ url_for('profile') }}" class="profile-form">
+
+<div class="form-group">
+  <label>Name</label>
+  <input type="text" name="name" value="{{ user[0] }}" required>
+</div>
+
+<div class="form-group password-group">
+<label>New Password</label>
+
+<div class="password-input">
+  <input id="newPassword" type="password" name="new_password">
+
+  <span class="toggle-password" onclick="togglePassword('newPassword')">
+    <i data-lucide="eye"></i>
+  </span>
+</div>
+
+</div>
+
+<div class="form-group password-group">
+<label>Confirm Current Password</label>
+
+<div class="password-input">
+  <input id="currentPassword" type="password" name="current_password" required>
+
+  <span class="toggle-password" onclick="togglePassword('currentPassword')">
+    <i data-lucide="eye"></i>
+  </span>
+</div>
+
+</div>
+
+<button type="submit" class="update-btn">
+Update Profile
+</button>
+
+</form>
+
+<div class="profile-divider"></div>
+
+<a href="/logout" class="logout-btn">
+Logout
+</a>
+
+</div>
+
+
+<script>
+  function togglePassword(fieldId) {
+    
+    const field = document.getElementById(fieldId);
+    const icon = field.nextElementSibling.querySelector("svg");
+
+    if (field.type == "password") {
+      field.type = "text";
+      icon.setAttribute("data-lucide", "eye-off");
+    }
+    else {
+      field.type = "password";
+      icon.setAttribute("data-lucide", "eye");
+    }
+
+    lucide.createIcons();
+  }
+
+function toggleProfile(){
+  const panel = document.getElementById("profilePanel");
+  panel.classList.toggle("open");
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("profile") === "open") {
+    document.getElementById("profilePanel").classList.add("open");
+
+    // remove ?profile=open from URL so refresh won't reopen
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
+  // auto-hide flash messages after 10s
+  setTimeout(() => {
+    document.querySelectorAll('.flash-message.success, .error-box')
+      .forEach(el => {
+        el.classList.add('hide');
+        setTimeout(() => el.style.display = 'none', 500); // fade-out
+      });
+  }, 10000);
+});
+
+</script>

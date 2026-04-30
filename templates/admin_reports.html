@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Section Reports | SmartAttend</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='images/mainIcon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-top">
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <i data-lucide="x"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-profile" onclick="toggleProfile()">
+        <div class="sidebar-avatar">
+            {{ user['first_name'][0]|upper if user else 'A' }}
+        </div>
+        <div>
+            <div class="sidebar-name">{{ user['first_name'] }}</div>
+            <div class="sidebar-sub">Admin</div>
+        </div>
+    </div>
+
+    <div class="sidebar-menu">
+        <a href="/admin_dashboard">
+            <i data-lucide="home"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/view_students">
+            <i data-lucide="users"></i>
+            <span>Students</span>
+        </a>
+        <a href="/manage_instructors">
+            <i data-lucide="user-cog"></i>
+            <span>Instructors</span>
+        </a>
+        <a href="/view_sections">
+            <i data-lucide="layers"></i>
+            <span>Sections</span>
+        </a>
+        <a href="/admin_reports" class="active">
+            <i data-lucide="bar-chart-3"></i>
+            <span>Reports</span>
+        </a>
+    </div>
+</div>
+
+<div class="main-content">
+
+    <div class="welcome-card">
+        <div class="welcome-top">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <i data-lucide="menu"></i>
+            </button>
+            <button class="profile-btn" onclick="toggleProfile()">
+                {{ user['first_name'][0]|upper if user else 'A' }}
+            </button>
+        </div>
+
+        <div class="welcome-text">
+            <h1>Attendance Analytics</h1>
+            <p>Institutional performance and section-wise breakdowns</p>
+        </div>
+    </div>
+
+    <div class="overview-grid">
+        <div class="overview-item">
+            <i data-lucide="activity"></i>
+            <div>
+                <p>Daily Participation</p>
+                <h3>{{ daily_participation }}%</h3>
+            </div>
+        </div>
+        
+        <div class="overview-item" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2)); border-color: rgba(239, 68, 68, 0.2);">
+            <i data-lucide="alert-triangle" style="stroke: #ef4444;"></i>
+            <div>
+                <p>At-Risk Students</p>
+                <h3>{{ at_risk_count }}</h3>
+            </div>
+        </div>
+
+        <div class="overview-item">
+            <i data-lucide="book-open"></i>
+            <div>
+                <p>Total Sections</p>
+                <h3>{{ reports|length }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-card no-hover">
+        <div class="table-header">
+            <div class="table-header-top">
+                <h2>Section Performance</h2>
+                </div>
+
+            <div class="table-header-bottom">
+                <input 
+                    type="text" 
+                    id="reportSearch" 
+                    placeholder="Search by Section Name..." 
+                    class="search-input"
+                />
+            </div>
+            <div class="table-header-bottom spaced"></div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="modern-table" id="reportTable">
+                <thead>
+                    <tr>
+                        <th>Section Name</th>
+                        <th>Total Students</th>
+                        <th>Avg. Attendance</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reports %}
+                    <tr>
+                        <td style="font-weight: 600; color: #f8fafc;">{{ r[0] }}</td>
+                        <td>{{ r[1] }} Students</td>
+                        <td style="font-weight: 500;">{{ r[2] or 0 }}%</td>
+                        <td>
+                            {% set avg = r[2] or 0 %}
+
+                            {% if r[2] >= 90 %}
+                                <span class="status-badge status-excellent">Excellent</span>
+                            {% elif r[2] >= 75 %}
+                                <span class="status-badge status-stable">Stable</span>
+                            {% else %}
+                                <span class="status-badge status-critical">Critical</span>
+                            {% endif %}
+                        </td>
+                        <td class="action-cell" style="text-align: right; padding-right: 20px;">
+                            <div class="action-menu">
+                                <button onclick="toggleMenu(this)" class="kebab-btn">
+                                    <i data-lucide="more-vertical"></i>
+                                </button>
+                                <div class="dropdown">
+                                    <a href="/view_section_details/{{ r[3] }}">
+                                        <i data-lucide="eye"></i>View Details
+                                    </a>
+                                    <a href="/export_section_csv/{{ r[3] }}">
+                                        <i data-lucide="download"></i>Export CSV
+                                    </a>
+                                    <a href="/export_section_pdf/{{ r[3] }}">
+                                        <i data-lucide="download"></i> Export PDF
+                                    </a>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="overlay" class="overlay" onclick="toggleProfile()"></div>
+
+<div id="profilePanel" class="profile-panel">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {{ user['first_name'][0]|upper if user else 'A' }}
+        </div>
+        <div class="profile-name">{{ user['first_name'] }}</div>
+    </div>
+    <button class="close-profile" onclick="toggleProfile()">
+        <i data-lucide="x"></i>
+    </button>
+    <div class="profile-content">
+        {% include "profile_admin.html" %}
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+
+    /* Sidebar */
+    function toggleSidebar(){
+        document.querySelector(".sidebar").classList.toggle("open");
+    }
+
+    function toggleProfile(){
+        document.getElementById("profilePanel").classList.toggle("open");
+        document.getElementById("overlay").classList.toggle("active");
+    }
+
+    function toggleMenu(button){
+        const menu = button.closest(".action-menu");
+        const isOpen = menu.classList.contains("active");
+        document.querySelectorAll(".action-menu").forEach(m => m.classList.remove("active"));
+        if (!isOpen) menu.classList.add("active");
+    }
+
+    /* Search for Reports */
+    document.getElementById("reportSearch").addEventListener("input", function() {
+        const value = this.value.toLowerCase();
+        const rows = document.querySelectorAll("#reportTable tbody tr");
+        rows.forEach(row => {
+            const sectionName = row.children[0].textContent.toLowerCase();
+            row.style.display = sectionName.includes(value) ? "" : "none";
+        });
+    });
+
+    /* Click Outside */
+    document.addEventListener("click", function(e){
+        if (!e.target.closest(".action-menu")) {
+            document.querySelectorAll(".action-menu").forEach(m => m.classList.remove("active"));
+        }
+    });
+
+    /* ESC Key */
+    document.addEventListener("keydown", function(e){
+        if (e.key === "Escape") {
+            document.getElementById("profilePanel").classList.remove("open");
+            document.getElementById("overlay").classList.remove("active");
+        }
+    });
+</script>
+
+</body>
+</html>

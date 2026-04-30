@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Session | SmartAttend</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/scan_qr.css') }}">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <div class="scan-page">
+
+    <div class="scan-card">
+
+      <div class="scan-header">
+        <div class="scan-icon">
+          <i data-lucide="qr-code"></i>
+        </div>
+
+        <div>
+          <h1>Attendance Marking</h1>
+          <p>Students can scan the QR code below to mark attendance.</p>
+        </div>
+      </div>
+
+       <div class="qr-wrapper">
+        <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code">
+      </div>
+
+      <div class="scan-note">
+        <i data-lucide="clock-3"></i>
+        Keep this screen open while students scan.
+      </div>
+
+      <div class="scan-actions">
+        <a href="/section/{{ section_id }}" class="done-btn">
+          <i data-lucide="arrow-left"></i>
+          Done
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+
+</body>
+</html>

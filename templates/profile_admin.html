@@ -1,0 +1,119 @@
+
+  <title>Profile Panel</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+<body>
+
+  <!-- CLOSE BUTTON -->
+  <button class="close-profile" onclick="toggleProfile()">
+    <i data-lucide="x"></i>
+  </button>
+
+  <div class="profile-wrapper">
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% if category == 'success' %}
+            <div class="flash-message success">{{ message }}</div>
+          {% elif category == 'error' %}
+            <div class="error-box">{{ message }}</div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- TITLE -->
+    <h2 class="profile-title">My Profile</h2>
+
+    <!-- FORM -->
+    <form method="POST" action="{{ url_for('admin_profile') }}" class="profile-form">
+
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" value="{{ user['username'] }}" required>
+      </div>
+
+      <div class="form-group password-group">
+        <label>New Password</label>
+
+        <div class="password-input">
+          <input id="newPassword" type="password" name="new_password">
+
+          <span class="toggle-password" onclick="togglePassword('newPassword')">
+            <i data-lucide="eye"></i>
+          </span>
+        </div>
+      </div>
+
+      <div class="form-group password-group">
+        <label>Confirm Current Password</label>
+
+        <div class="password-input">
+          <input id="currentPassword" type="password" name="current_password" required>
+
+          <span class="toggle-password" onclick="togglePassword('currentPassword')">
+            <i data-lucide="eye"></i>
+          </span>
+        </div>
+      </div>
+
+      <button type="submit" class="update-btn">
+        Update Profile
+      </button>
+
+    </form>
+
+    <!-- DIVIDER -->
+    <div class="profile-divider"></div>
+
+    <!-- LOGOUT -->
+    <a href="/logout" class="logout-btn">
+      Logout
+    </a>
+
+  </div>
+
+<script>
+
+  function togglePassword(fieldId) {
+  const field = document.getElementById(fieldId);
+  const icon = field.parentElement.querySelector(".eye-icon");
+
+  if (field.type === "password") {
+    field.type = "text";
+    icon.setAttribute("data-lucide", "eye-off");
+  } else {
+    field.type = "password";
+    icon.setAttribute("data-lucide", "eye");
+  }
+
+  lucide.createIcons({
+    icons: {
+      [icon.getAttribute("data-lucide")]: lucide.icons[icon.getAttribute("data-lucide")]
+    }
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => { 
+
+ // Load icons
+  lucide.createIcons();
+
+// Auto-hide flash messages
+   setTimeout(() => {
+     document.querySelectorAll('.flash-message.success, .error-box')
+       .forEach(el => {
+         el.classList.add('hide');
+         setTimeout(() => el.style.display = 'none', 500);
+       });
+   }, 4000); 
+
+});
+
+ </script> 
+</body>
+

@@ -1,0 +1,33 @@
+<h1>Edit Student</h1>
+
+<form method="POST">
+
+Student ID:<br>
+<input type="text" value="{{ student[0] }}" disabled>
+
+<br><br>
+
+Name:<br>
+<input type="text" name="name" value="{{ student[1] }}">
+
+<br><br>
+
+Email:<br>
+<input type="email" name="email" value="{{ student[2] }}">
+
+<br><br>
+
+Password:<br>
+<input type="text" name="password" value="{{ student[3] }}">
+
+<br><br>
+
+<button type="submit">Update</button>
+
+</form>
+
+<br>
+
+<a href="/view_students">
+    <button>Back</button>
+</a>

@@ -1,0 +1,28 @@
+<h1>Edit Instructor</h1>
+
+<form method="POST">
+
+Name:<br>
+<input type="text" name="name" value="{{ instructor[1] }}">
+
+<br><br>
+
+Email:<br>
+<input type="email" name="email" value="{{ instructor[2] }}">
+
+<br><br>
+
+Password:<br>
+<input type="text" name="password" value="{{ instructor[3] }}">
+
+<br><br>
+
+<button type="submit">Update</button>
+
+</form>
+
+<br>
+
+<a href="/manage_instructors">
+    <button>Back</button>
+</a>

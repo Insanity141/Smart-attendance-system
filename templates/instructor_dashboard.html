@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instructor Dashboard | SmartAttend</title>
+
+  <link rel="icon" href="{{ url_for('static', filename='images/mainIcon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/instructor_dashboard.css') }}">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="{{ url_for('static', filename='js/instructor.js') }}" defer></script>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <button class="menu-toggle" onclick="toggleSidebar()">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <div class="sidebar-profile" onclick="toggleProfile()">
+      <div class="sidebar-avatar">
+        {{ user['name'][0]|upper if user else 'I' }}
+      </div>
+      <div>
+        <div class="sidebar-name">
+          {{ user['name'] if user else 'Instructor' }}
+        </div>
+        <div class="sidebar-sub">Instructor</div>
+      </div>
+    </div>
+
+    <div class="sidebar-menu">
+      <a href="/instructor_dashboard" class="active">
+        <i data-lucide="layout-dashboard"></i>
+        <span>My Sections</span>
+      </a>
+
+      <div class="sidebar-subsections">
+        {% for section in sections[:5] %}
+          <a href="/section/{{ section[0] }}" class="sidebar-subitem">
+            {{ section[1] }}
+          </a>
+        {% endfor %}
+
+          {% if sections|length > 5 %}
+            <a href="/instructor_dashboard" class="sidebar-more">
+              + More
+            </a>
+          {% endif %}
+        </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- WELCOME -->
+    <div class="welcome-card">
+      <div class="welcome-top">
+        <button class="menu-toggle" onclick="toggleSidebar()">
+          <i data-lucide="menu"></i>
+        </button>
+
+        <button class="profile-btn" onclick="toggleProfile()">
+          {{ user['name'][0]|upper if user else 'I' }}
+        </button>
+      </div>
+
+      <div class="welcome-text">
+        <h1>Instructor Dashboard</h1>
+        <p>Manage your classes and track student attendance records.</p>
+      </div>
+    </div>
+
+    <!-- SECTIONS -->
+    <div class="section">
+
+      <!-- HEADER -->
+      <div class="section-header">
+        <h2>My Active Sections</h2>
+
+        <button class="update-btn create-section-btn" onclick="openCreateSectionModal()">
+          <i data-lucide="plus-circle"></i>
+          New Section
+        </button>
+      </div>
+
+      <!-- GRID -->
+      <div class="section-grid">
+
+        {% for section in sections %}
+        <div class="section-card"
+             onclick="window.location.href='/section/{{ section[0] }}'">
+
+          <!-- CARD HEADER -->
+          <div class="card-header">
+
+            <div class="section-icon-wrapper">
+              <i data-lucide="book-open"></i>
+            </div>
+
+            <!-- KEBAB -->
+            <div class="kebab-container" onclick="event.stopPropagation()">
+              <button class="kebab-btn" onclick="toggleKebabMenu(this)">
+                <i data-lucide="more-vertical"></i>
+              </button>
+
+              <div class="kebab-dropdown">
+
+                <button class="kebab-item"
+                        onclick="openEditModal('{{ section[0] }}')">
+                  <i data-lucide="edit-2"></i>
+                  Edit
+                </button>
+
+                <a href="/delete_section/{{ section[0] }}"
+                   class="kebab-item delete"
+                   onclick="return confirm('Drop this section?')">
+                  <i data-lucide="trash-2"></i>
+                  Drop
+                </a>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- SECTION INFO -->
+          <div class="section-info">
+            <h3>{{ section[1] }}</h3>
+            <p class="section-meta">
+              <i data-lucide="users"></i>
+              {{ section[2] }} Students
+            </p>
+          </div>
+
+          <!-- FOOTER -->
+          <div class="card-footer-hint">
+            <span>Enter Section Dashboard</span>
+            <i data-lucide="chevron-right"></i>
+          </div>
+
+        </div>
+        {% endfor %}
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE PANEL -->
+  <div class="overlay" id="overlay" onclick="toggleProfile()"></div>
+
+<div class="profile-panel" id="profilePanel">
+
+  <button class="close-profile" onclick="toggleProfile()">
+    <i data-lucide="x"></i>
+  </button>
+
+  <!-- HEADER -->
+  <div class="profile-header">
+    <div class="profile-avatar">
+      {{ user['name'][0]|upper if user else 'I' }}
+    </div>
+
+    <div class="profile-name">
+      {{ user['name'] if user else 'Instructor' }}
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="profile-body">
+
+    <h3 class="profile-title">My Profile</h3>
+
+    <form method="POST" action="/update_instructor_profile" class="profile-form">
+
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" value="{{ user['name'] }}">
+      </div>
+
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" name="new_password">
+      </div>
+
+      <div class="form-group">
+        <label>Confirm Current Password</label>
+        <input type="password" name="current_password">
+      </div>
+
+      <button type="submit" class="update-btn">
+        Update Profile
+      </button>
+
+    </form>
+
+    <a href="/logout" class="logout-btn">
+      Logout
+    </a>
+
+  </div>
+
+</div>
+
+  <!-- CREATE SECTION MODAL -->
+<div class="modal-overlay" id="createSectionOverlay" onclick="closeCreateSectionModal()"></div>
+
+<div class="modal" id="createSectionModal" onclick="event.stopPropagation()">
+  <div class="modal-header">
+    <h2>Create Section</h2>
+    <button class="modal-close" onclick="closeCreateSectionModal()">
+      <i data-lucide="x"></i>
+    </button>
+  </div>
+
+  <form method="POST" action="/create_section" class="modal-form">
+    <input
+      type="text"
+      name="section_name"
+      placeholder="Section Name"
+      required
+    >
+
+    <div class="modal-actions">
+      <button type="button" class="cancel-btn" onclick="closeCreateSectionModal()">
+        Cancel
+      </button>
+
+      <button type="submit" class="create-btn">
+        Create Section
+      </button>
+    </div>
+  </form>
+</div>
+
+</body>
+</html>

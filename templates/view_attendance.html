@@ -1,0 +1,19 @@
+<h2>Attendance Records</h2>
+
+<table = border="1">
+    <tr>
+        <th>Student Name</th>
+        <th>Student Code</th>
+        <th>Session Code</th>
+        <th>Time Marked</th>
+    </tr>
+
+    {% for r in record %}
+    <tr>
+        <td>{{ r[0] }}</td>
+        <td>{{ r[1] }}</td>
+        <td>{{ r[2] }}</td>
+        <td>{{ r[3] }}</td>
+    </tr>
+    {% endfor %}
+</table>

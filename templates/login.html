@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login | Smart Attend</title>
+
+<link rel="icon" href="{{ url_for('static', filename='images/mainIcon.png')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+  <body>
+
+    <div class="login-wrapper">
+
+      <div class="system-title">
+
+        <a href="{{ url_for('home') }}" class="logo-link">
+
+          <img src="{{ url_for('static', filename='images/mainIcon.png') }}" alt="logo">
+
+          <h1>
+            <span class="logo-white">Smart</span>
+            <span class="logo-cyan">Attend</span>
+          </h1>
+
+        </a>
+
+        <p>University Attendance Portal</p>
+
+      </div>
+
+      <div class="login-card">
+          <h2 class="login-title">Welcome Back</h2>
+          <p class="login-subtitle">Login to continue to SmartAttend</p>
+
+          {%if error %}
+          <div class="error-box">
+            {{ error }}
+          </div>
+          {% endif %}
+
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+
+          {% for category, message in messages %}
+
+          <div class="flash-message {{ category }}">
+              {{ message }}
+          </div>
+
+          {% endfor %}
+
+          {% endif %}
+          {% endwith %}
+
+          <form method="POST">
+            <div class="form-group">
+              <label>Role</label>
+              <select name="role">
+                <option value="admin">Admin</option>
+                <option value="instructor">Instructor</option>
+                <option value="student">Student</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Email / Student ID</label>
+              <input type="text" name="username" required>
+            </div>
+
+            <div class="form-group">
+              <label>Password</label>
+
+              <div class="password-field">
+                <input type="password" name="password" id="password" required>
+
+                <span class="toggle-password hidden" onclick="togglePassword('password', this)">
+                  <i data-lucide="eye"></i>
+                </span>
+
+              </div> 
+            </div>
+
+            <button class="btn-login">Login</button>
+
+          </form>
+
+          <div class="forgot">
+            <a href="#" onclick="alert('Please contact system administrator.')">Forgot Password?</a>
+          </div>
+
+      </div>
+
+    </div>
+
+    <script>
+      function togglePassword(fieldId, el) {
+        
+        const input = document.getElementById(fieldId);
+        let icon = el.querySelector("svg");
+
+        if (input.type == "password") {
+          input.type = "text";
+          icon.setAttribute("data-lucide", "eye-off");
+        }
+        else {
+          input.type = "password";
+          icon.setAttribute("data-lucide", "eye");
+        }
+
+        lucide.createIcons();
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+      });
+
+    </script>
+
+  </body>
+
+</html>

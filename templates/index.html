@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Attendance</title>
+  <link rel="icon" href="{{ url_for('static', filename='images/mainIcon.png')}}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+
+  <body>
+
+    <header>
+      <nav class="navbar">
+
+        <a href="/" class="logo">
+          <img src="{{ url_for('static', filename='images/mainIcon.png') }}" class="logo-icon">
+          <span class="logo-white">Smart</span>
+          <span class="logo-cyan">Attend</span>
+        </a>
+
+        <div class="nav-links" id="navMenu">
+
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#works">How It Works</a></li>
+        </ul>
+
+        <a href="/login" class="login">Login</a>
+
+        </div>
+
+        <div class="hamburger" id="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+      </nav>
+    </header>
+
+    <!-- HERO -->
+
+    <section class="hero">
+      <div class="container">
+
+        <div class="hero-text">
+          <h1>
+            <span class="hero-gradient">Smart Attendance</span><br>
+            Management System
+          </h1>
+
+          <p>
+            A modern way to track attendance using QR technology,
+            real-time monitoring and automated reports.
+          </p>
+
+          <a href="/student_signup" class="start">Get Started</a>
+        </div>
+
+        <div class="hero-img">
+          <img src="{{ url_for('static', filename='images/hero.png')}}" alt="hero">
+        </div>
+
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- FEATURES -->
+
+    <section id="features" class="features">
+      <div class="container">
+
+        <h2 class="section-title">Powerful Features</h2>
+
+        <div class="features-grid">
+
+          <div class="box">
+            <img src="{{ url_for('static', filename='images/realtime.png') }}" class="feature-icon">
+            <h3>Real-Time Tracking</h3>
+            <p>Monitor attendance instantly and accurately.</p>
+          </div>
+
+          <div class="box">
+            <img src="{{ url_for('static', filename='images/autoreport.png') }}" class="feature-icon">
+            <h3>Automated Reports</h3>
+            <p>Generate smart analytics and insights.</p>
+          </div>
+
+          <div class="box">
+            <img src="{{ url_for('static', filename='images/security.png') }}" class="feature-icon">
+            <h3>Secure & Reliable</h3>
+            <p>Your attendance data stays protected.</p>
+          </div>
+
+          <div class="box">
+            <img src="{{ url_for('static', filename='images/qr.png') }}" class="feature-icon">
+            <h3>QR Scanning</h3>
+            <p>Fast attendance check-in with QR technology.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+
+    <section id="works" class="works">
+      <div class="container">
+        
+        <h2 class="section-title dark">How It Works</h2>
+
+        <div class="work-box">
+
+          <div class="work-step">
+            <img src="{{ url_for('static', filename='images/checkIn.png') }}" class="work-icon">
+            <h3>Check-In</h3>
+            <p>Students check in using their mobile device.</p>
+          </div>
+
+            <div class="work-step">
+              <img src="{{ url_for('static', filename='images/scanning.png') }}" class="work-icon">
+              <h3>Scan QR Code</h3>
+              <p>Scan the classroom QR code for instant attendance.</p>
+            </div>
+
+              <div class="work-step">
+                <img src="{{ url_for('static', filename='images/report.png') }}" class="work-icon">
+                <h3>Generate Reports</h3>
+                <p>Teachers view automated attendance reports.</p>
+              </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+
+    <section class="cta">
+      <h2>Start managing attendance smarter today</h2>
+      <a href="/student_signup" class="cta-btn">Create Student Account</a>
+    </section>
+
+    <footer>
+      <p>© 2026 Smart Attend</p>
+    </footer>
+
+    <script>
+
+    const hamburger = document.getElementById("hamburger");
+    const navMenu = document.getElementById("navMenu");
+
+    hamburger.addEventListener("click", () => {
+    navMenu.classList.toggle("active");
+    });
+
+    </script>
+  </body>
+</html>

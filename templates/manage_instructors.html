@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage instructors | SmartAttend</title>
+
+    <link rel="icon" href="{{ url_for('static', filename='images/mainIcon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <div class="sidebar">
+
+  <div class="sidebar-top">
+    <button class="menu-toggle" onclick="toggleSidebar()">
+      <i data-lucide="x"></i>
+    </button>
+  </div>
+
+  <div class="sidebar-profile" onclick="toggleProfile()">
+    <div class="sidebar-avatar">
+      {{ user['first_name'][0]|upper if user else 'A' }}
+    </div>
+    <div>
+      <div class="sidebar-name">{{ user['first_name'] }}</div>
+      <div class="sidebar-sub">Admin</div>
+    </div>
+  </div>
+
+  <div class="sidebar-menu">
+
+    <a href="/admin_dashboard">
+      <i data-lucide="home"></i>
+      <span>Dashboard</span>
+    </a>
+
+    <a href="/view_students">
+      <i data-lucide="users"></i>
+      <span>Students</span>
+    </a>
+
+    <a href="/manage_instructors" class="active">
+      <i data-lucide="user-cog"></i>
+      <span>Instructors</span>
+    </a>
+
+    <a href="/view_sections">
+      <i data-lucide="layers"></i>
+      <span>Sections</span>
+    </a>
+
+    <a href="/admin_reports">
+      <i data-lucide="bar-chart-3"></i>
+      <span>Reports</span>
+    </a>
+
+  </div>
+
+</div>
+
+    <div class="main-content">
+
+  <!-- HEADER -->
+  <div class="welcome-card">
+
+    <div class="welcome-top">
+
+      <!-- LEFT: MENU -->
+      <button class="menu-toggle" onclick="toggleSidebar()">
+        <i data-lucide="menu"></i>
+      </button>
+
+      <!-- RIGHT: PROFILE -->
+      <button class="profile-btn" onclick="toggleProfile()">
+        {{ user['first_name'][0]|upper if user else 'A' }}
+      </button>
+
+    </div>
+
+    <div class="welcome-text">
+      <h1>Manage Instructors</h1>
+      <p>View, edit and manage instructor accounts</p>
+    </div>
+
+  </div>
+
+  <!-- INSTRUCTOR TABLE CARD -->
+  <div class="dashboard-card no-hover">
+
+    <!-- TOP BAR -->
+    <div class="table-header">
+
+        <div class="table-header-top">
+    <h2>Instructor List</h2>
+
+    <button class="add-btn" onclick="openModal()">
+      <i data-lucide="plus"></i>
+      Add
+    </button>
+  </div>
+
+  <!-- search row -->
+  <div class="table-header-bottom">
+    <input 
+    type="text" 
+    id="instructorSearch" 
+    placeholder="Search by email or name..." 
+    class="search-input"
+    />
+  </div>
+
+  <div class="table-header-bottom spaced"></div>
+
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrapper">
+      <table class="modern-table">
+
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {% for i in instructors %}
+          <tr>
+
+            <!-- <td>{{ i[0] }}</td> -->
+             <td>
+              <div class="mini-avatar">
+                {{ i[1][0]|upper }}
+              </div>
+             </td>
+            <td>{{ i[1] }}</td>
+            <td>{{ i[2] }}</td>
+
+            <td class="action-cell">
+
+              <!-- KEBAB MENU -->
+              <div class="action-menu">
+
+                <button onclick="toggleMenu(this)" class="kebab-btn">
+                  <i data-lucide="more-vertical"></i>
+                </button>
+
+                <div class="dropdown">
+
+                  <a href="#" onclick="openEditModal('{{ i[0] }}', '{{ i[1] }}', '{{ i[2] }}')">
+                    <i data-lucide="edit"></i> Edit
+                  </a>
+
+                  <a href="/delete_instructor/{{ i[0] }}" class="danger">
+                    <i data-lucide="trash"></i> Delete
+                  </a>
+
+                </div>
+
+              </div>
+
+            </td>
+
+          </tr>
+          {% endfor %}
+
+        </tbody>
+
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- modal popup for adding ins  -->
+
+<div id="addModal" class="modal">
+  <div class="modal-content">
+
+    <h2>Add Instructor</h2>
+
+    <form id="addInstructorForm">
+
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" required>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" required>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="text" name="password" required>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="update-btn">Add</button>
+        <button type="button" onclick="closeModal()" class="logout-btn">Cancel</button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<!-- editing instructors -->
+
+<div id="editModal" class="modal">
+  <div class="modal-content">
+
+    <h2>Edit Instructor</h2>
+
+    <form id="editInstructorForm">
+
+      <input type="hidden" name="id" id="editId">
+
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" name="name" id="editName" required>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" id="editEmail" required>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" id="editPassword" placeholder="Leave blank to keep unchanged">
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="update-btn">Update</button>
+        <button type="button" onclick="closeEditModal()" class="logout-btn">Cancel</button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<!-- Overlay for slide-in profile -->
+<div id="overlay" class="overlay" onclick="toggleProfile()"></div>
+
+<!-- side profile  -->
+    <div id="profilePanel" class="profile-panel">
+        <div class="profile-header">
+            <div class="profile-avatar">{{ user['first_name'][0]|upper }}</div>
+            <div class="profile-name">{{ user['first_name'] }}</div>
+        </div>
+
+        <button class="close-profile" onclick="toggleProfile()"><i data-lucide="x"></i></button>
+
+        <div class="profile-content">
+            {% include "profile_admin.html" %}
+        </div>
+    </div>
+
+<script>
+    lucide.createIcons();
+
+  function toggleSidebar(){
+    document.querySelector(".sidebar").classList.toggle("open");
+  }
+
+  function toggleProfile(){
+    const panel = document.getElementById("profilePanel");
+    const overlay = document.getElementById("overlay");
+
+    panel.classList.toggle("open");
+    overlay.classList.toggle("active");
+
+    lucide.createIcons();
+  }
+
+  function toggleMenu(button){
+  const menu = button.closest(".action-menu");
+  const isOpen = menu.classList.contains("active");
+
+  // close all
+  document.querySelectorAll(".action-menu")
+    .forEach(m => m.classList.remove("active"));
+
+  // toggle current
+  if (!isOpen) {
+    menu.classList.add("active");
+  }
+}
+
+// click outside
+  document.addEventListener("click", function(e){
+
+    if (!e.target.closest(".action-menu")) {
+      document.querySelectorAll(".action-menu")
+        .forEach(m => m.classList.remove("active"));
+    }
+
+    // click outside to close modal popup
+
+    if (e.target === addModal) {
+      closeModal();
+    }
+    if (e.target === editModal) {
+      closeEditModal();
+    }
+
+});
+
+// esc button to close modal popup 
+
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") {
+    closeModal();
+    closeEditModal();
+  }
+
+ // side profile
+
+  if (e.key == "Escape") {
+    document.getElementById("profilePanel").classList.remove("open");
+    document.getElementById("overlay").classList.remove("active");
+  }
+});
+
+// Modal js
+
+function openModal() {
+  document.getElementById("addModal").classList.add("active");
+}
+
+function closeModal() {
+  document.getElementById("addModal").classList.remove("active");
+}
+
+// Ajax submission 
+
+document.getElementById("addInstructorForm")
+.addEventListener("submit", async function(e){
+
+  e.preventDefault();
+
+  const formData = new FormData(this);
+
+  try {
+    const response = await fetch("/add_instructor", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+    console.log("Server response:", data); // 🔍 DEBUG
+
+    // ❌ Handle failure
+    if (!data.success) {
+      alert(data.message);
+      return;
+    }
+
+    // ✅ Add new row instantly
+    const table = document.querySelector(".modern-table tbody");
+
+    const row = `
+      <tr>
+        <td>
+          <div class="mini-avatar">
+            ${data.name.charAt(0).toUpperCase()}
+          </div>  
+        </td>
+        <td>${data.name}</td>
+        <td>${data.email}</td>
+        <td class="action-cell">
+          <div class="action-menu">
+            <button onclick="toggleMenu(this)" class="kebab-btn">
+              <i data-lucide="more-vertical"></i>
+            </button>
+            <div class="dropdown">
+              <a href="/edit_instructor/${data.id}">Edit</a>
+              <a href="/delete_instructor/${data.id}" class="danger">Delete</a>
+            </div>
+          </div>
+        </td>
+      </tr>
+    `;
+
+    table.insertAdjacentHTML("beforeend", row);
+
+    // 🔥 IMPORTANT: re-render icons
+    lucide.createIcons();
+
+    closeModal();
+    this.reset();
+
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Something went wrong");
+  }
+});
+
+function openEditModal(id, name, email) {
+  document.getElementById("editId").value = id;
+  document.getElementById("editName").value = name;
+  document.getElementById("editEmail").value = email;
+  document.getElementById("editPassword").value = "";
+
+  document.getElementById("editModal").classList.add("active");
+}
+
+function closeEditModal() {
+  document.getElementById("editModal").classList.remove("active");
+}
+
+document.getElementById("editInstructorForm")
+.addEventListener("submit", async function(e){
+
+  e.preventDefault();
+
+  const formData = new FormData(this);
+
+  const response = await fetch("/edit_instructor", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await response.json();
+
+  if (!data.success) {
+    alert("Update failed");
+    return;
+  }
+
+  location.reload(); // keep simple for now
+});
+
+// instructor searchbar 
+document.getElementById("instructorSearch")
+.addEventListener("input", function() {
+
+  const value = this.value.toLowerCase();
+  const rows = document.querySelectorAll(".modern-table tbody tr");
+
+  rows.forEach(row => {
+    const name = row.children[1].textContent.toLowerCase();
+    const email = row.children[2].textContent.toLowerCase();
+
+    if (email.includes(value) || name.includes(value)) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | SmartAttend</title>
+
+  <link rel="icon" href="{{ url_for('static', filename='images/mainIcon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+  <div class="sidebar">
+
+      <!-- MOBILE CLOSE BUTTON -->
+  <div class="sidebar-top">
+    <button class="menu-toggle" onclick="toggleSidebar()">
+      <i data-lucide="x"></i>
+    </button>
+  </div>
+
+  <!-- PROFILE SHORT -->
+  <div class="sidebar-profile" onclick="toggleProfile()">
+    <div class="sidebar-avatar">
+      {{ user['first_name'][0]|upper }}
+    </div>
+    <div>
+      <div class="sidebar-name">{{ user['first_name'] }}</div>
+      <div class="sidebar-sub">Admin</div>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <div class="sidebar-menu">
+
+    <a href="/admin_dashboard" class="active">
+      <i data-lucide="home"></i>
+      <span>Dashboard</span>
+    </a>
+
+    <a href="/view_students">
+      <i data-lucide="users"></i>
+      <span>Students</span>
+    </a>
+
+    <a href="/manage_instructors">
+      <i data-lucide="user-cog"></i>
+      <span>Instructors</span>
+    </a>
+
+    <a href="/view_sections">
+      <i data-lucide="layers"></i>
+      <span>Sections</span>
+    </a>
+
+    <a href="/admin_reports">
+      <i data-lucide="bar-chart-3"></i>
+      <span>Reports</span>
+    </a>
+
+  </div>
+
+</div>
+
+<div class="main-content">
+
+  <!-- welcome card  -->
+
+  <div class="welcome-card">
+    <div class="welcome-top">
+
+      <!--Side bar-->
+
+      <button class="menu-toggle" onclick="toggleSidebar()">
+        <i data-lucide="menu"></i>
+      </button>
+
+      <!--Right profile-->
+
+      <button class="profile-btn" onclick="toggleProfile()">
+        {{ user['first_name'][0]|upper }}
+      </button>
+
+    </div>
+
+    <!--Welcome card text-->
+    
+      <div class="welcome-text">
+        <h1>Welcome, {{ user['first_name'] }}!</h1>
+        <p>Here's an overview of the system stats.</p>
+      </div>
+  </div>
+
+      <!-- CENTER: System Overview -->
+  <div class="section">     
+  <div class="dashboard-card overview-card">
+
+  <h2>System Overview</h2>
+
+  <div class="overview-grid">
+
+    <div class="overview-item">
+      <i data-lucide="users"></i>
+      <div>
+        <h3>{{ students }}</h3>
+        <p>Total Students</p>
+      </div>
+    </div>
+
+    <div class="overview-item">
+      <i data-lucide="user"></i>
+      <div>
+        <h3>{{ instructors }}</h3>
+        <p>Total Instructors</p>
+      </div>
+    </div>
+
+    <div class="overview-item">
+      <i data-lucide="layers"></i>
+      <div>
+        <h3>{{ sections }}</h3>
+        <p>Total Sections</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+  <!-- Management Card -->
+<div class="section">
+  <div class="dashboard-card management-card">
+  <h2>Management</h2>
+
+  <div class="management-grid">
+
+    <a href="/manage_instructors" class="management-item">
+      <i data-lucide="user-cog"></i>
+      <div>
+        <h3>Instructors</h3>
+        <p>Manage instructors & assignments</p>
+      </div>
+    </a>
+
+    <a href="/view_students" class="management-item">
+      <i data-lucide="users"></i>
+      <div>
+        <h3>Students</h3>
+        <p>View and control student records</p>
+      </div>
+    </a>
+
+    <a href="/view_sections" class="management-item">
+      <i data-lucide="layers"></i>
+      <div>
+        <h3>Sections</h3>
+        <p>Organize course sections</p>
+      </div>
+    </a>
+
+    <a href="/admin_reports" class="management-item">
+      <i data-lucide="bar-chart-3"></i>
+      <div>
+        <h3>Reports</h3>
+        <p>Analyze attendance data</p>
+      </div>
+    </a>
+
+  </div>
+</div>
+</div>
+
+  <!-- Overlay for slide-in profile -->
+  <div id="overlay" class="overlay" onclick="toggleProfile()"></div>
+</div>
+
+    <!-- RIGHT: Profile -->
+    <div id="profilePanel" class="profile-panel">
+        <div class="profile-header">
+            <div class="profile-avatar">{{ user['first_name'][0]|upper }}</div>
+            <div class="profile-name">{{ user['first_name'] }}</div>
+        </div>
+
+        <button class="close-profile" onclick="toggleProfile()"><i data-lucide="x"></i></button>
+
+        <div class="profile-content">
+            {% include "profile_admin.html" %}
+        </div>
+    </div>
+
+  <script>
+
+  document.addEventListener("DOMContentLoaded", () => { 
+    lucide.createIcons(); 
+  });
+
+  function toggleProfile(){
+    const panel = document.getElementById("profilePanel");
+    const overlay = document.getElementById("overlay");
+
+    panel.classList.toggle("open");
+    overlay.classList.toggle("active");
+
+    lucide.createIcons();
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+  lucide.createIcons();
+
+  // 🔥 Auto-open profile if flash message exists
+  const hasFlash = document.querySelector(
+    ".flash-message.success, .error-box"
+  );
+
+  if (hasFlash) {
+    document.getElementById("profilePanel").classList.add("open");
+    document.getElementById("overlay").classList.add("active");
+  }
+});
+
+  // esc to close
+
+  document.addEventListener("keydown", function(e){
+    if (e.key == "Escape") {
+      document.getElementById("profilePanel").classList.remove("open");
+      document.getElementById("overlay").classList.remove("active");
+    }
+  });
+
+  function toggleSidebar(){
+    document.querySelector(".sidebar").classList.toggle("open");
+  }  
+
+  // manage instructors js 
+
+  function toggleMenu(button){
+
+  // close all first
+  document.querySelectorAll(".action-menu")
+    .forEach(menu => menu.classList.remove("active"));
+
+  // open this one
+  const menu = button.closest(".action-menu");
+  menu.classList.toggle("active");
+
+}
+
+// click outside to close
+document.addEventListener("click", function(e){
+  if (!e.target.closest(".action-menu")) {
+    document.querySelectorAll(".action-menu")
+      .forEach(menu => menu.classList.remove("active"));
+  }
+});
+  </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Signup | Smart Attend</title>
+
+<link rel="icon" href="{{ url_for('static', filename='images/mainIcon.png') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+<body>
+
+<div class="signup-wrapper">
+
+    <!-- LOGO / TITLE -->
+    <div class="system-title">
+
+        <a href="{{ url_for('home') }}" class="logo-link">
+
+            <img src="{{ url_for('static', filename='images/mainIcon.png') }}" alt="logo">
+
+            <h1>
+                <span class="logo-white">Smart</span>
+                <span class="logo-cyan">Attend</span>
+            </h1>
+
+        </a>
+
+        <p>Create your student account</p>
+
+    </div>
+
+
+    <!-- SIGNUP CARD -->
+
+    <div class="signup-card">
+
+        <h2>Student Signup</h2>
+
+        <form method="POST">
+
+            <div class="form-group">
+                <label>First Name</label>
+                <input type="text" name="first_name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" name="last_name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Student ID</label>
+                <input type="text" name="student_id" required>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+
+                <div class="password-field">
+                    <input type="password" name="password" id="password" required>
+
+                    <span class="toggle-password" onclick="togglePassword('password', this)">
+                        <i data-lucide="eye"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Confirm Password</label>
+
+                <div class="password-field">
+                    <input type="password" name="confirm_password" id="confirm_password" required>
+
+                    <span class="toggle-password" onclick="togglePassword('confirm_password', this)">
+                        <i data-lucide="eye"></i>
+                    </span>
+                </div>
+
+            </div>
+
+            <button class="btn-signup">Create Account</button>
+
+        </form>
+
+        <div class="login-link">
+            Already have an account?
+            <a href="/login">Login</a>
+        </div>
+
+    </div>
+
+</div>
+
+    <script>
+        function togglePassword(fieldId, el) {
+
+            const input = document.getElementById(fieldId);
+            let icon = el.querySelector("svg") || el.querySelector("i");
+
+            if (input.type == "password") {
+                input.type = "text";
+                icon.setAttribute("data-lucide", "eye-off")
+            }
+            else {
+                input.type = "password";
+                icon.setAttribute("data-lucide", "eye");
+            }
+            lucide.createIcons();
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+
+    </script>
+
+</body>
+</html>

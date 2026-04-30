@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Dashboard | SmartAttend</title>
+
+<link rel="icon" href="{{ url_for('static', filename='images/mainIcon.png') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/student_dashboard.css') }}">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+<a href="{{ url_for('home') }}" class="logo">
+
+<img src="{{ url_for('static', filename='images/mainIcon.png') }}">
+
+<span class="logo-white">Smart</span><span class="logo-cyan">Attend</span>
+
+</a>
+
+<div class="nav-actions">
+
+<button class="profile-btn" onclick="toggleProfile()">
+<i data-lucide="user"></i>
+</button>
+
+</div>
+
+</nav>
+
+
+<!-- DASHBOARD -->
+
+<div class="dashboard-container">
+
+<div class="welcome-card">
+    <h1>Welcome, {{ student_name }}</h1>
+    <p>Here is your attendance overview.</p>
+</div>
+
+<div class="dashboard-card">
+
+<h3>Your Sections</h3>
+
+<div class="table-wrapper">
+
+<table class="attendance-table">
+
+<thead>
+
+<tr>
+<th>Section</th>
+<th>Present</th>
+<th>Total</th>
+<th>Attendance %</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for s in sections %}
+
+<tr>
+
+<td>{{ s[1] }}</td>
+
+<td>{{ s[3] }}</td>
+
+<td>{{ s[2] }}</td>
+
+<td>{{ s[4] }}%</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- PROFILE PANEL -->
+
+<div id="overlay" class="overlay" onclick="toggleProfile()"></div>
+
+<div id="profilePanel" class="profile-panel">
+
+<div class="profile-header">
+
+<!-- <h3>User Info</h3> -->
+
+</div>
+
+<button class="close-profile" onclick="toggleProfile()">
+    <i data-lucide="x"></i>
+</button>
+
+<div class="profile-content">
+
+{% include "profile.html" %}
+
+</div>
+
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+    });
+
+    function toggleProfile(){
+
+    const panel = document.getElementById("profilePanel");
+    const overlay = document.getElementById("overlay");
+
+    panel.classList.toggle("open");
+    overlay.classList.toggle("active");
+
+    lucide.createIcons();
+    }
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key == "Escape") {
+            document.getElementById("profilePanel").classList.remove("open");
+            document.getElementById("overlay").classList.remove("active");
+        }
+    });
+
+</script>
+
+</body>
+</html>
